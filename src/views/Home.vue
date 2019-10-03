@@ -6,6 +6,7 @@
                     <div class="btns">
                         <ui-raised-button class="btn" label="下载" primary @click="download" />
                         <ui-raised-button class="btn" label="填充" @click="fill" />
+                        <ui-raised-button class="btn" label="上传" @click="save" v-if="saveVisible" />
                     </div>
                     <input class="input" v-model="curColor" type="color">
                     <ul class="color-list">
@@ -39,7 +40,7 @@
         </div>
         <ui-drawer class="settingBox" :open="settingVisible" :docked="false" right @close="toggleSetting()">
             <ui-appbar title="设置">
-                <ui-icon-button icon="close" slot="left" @click="toggleSeitting" />
+                <ui-icon-button icon="close" slot="left" @click="toggleSetting" />
                 <ui-icon-button icon="check" slot="right" @click="finish" />
             </ui-appbar>
             <div class="body">
@@ -51,6 +52,7 @@
 </template>
 
 <script>
+    /* eslint-disable */
     const saveAs = window.saveAs
 
     export default {
@@ -63,6 +65,7 @@
                 gridNum: 8,
                 gridSize: 14,
                 map: [],
+                saveVisible: false,
                 page: {
                     menu: [
                         {
@@ -85,6 +88,7 @@
             }
         },
         mounted() {
+            this.saveVisible = !!this.$route.query.debug
             this.canvas = document.getElementById('canvas')
             let size = window.innerWidth - 32
             if (size > 480) {
@@ -240,6 +244,28 @@
                     }
                     saveAs(blob, fileName)
                 })
+            },
+            save() {
+                let dataUrl = this.canvas.toDataURL()
+                console.log(dataUrl)
+                let data = {
+                    width: this.gridNum,
+                    height: this.gridNum,
+                    img: dataUrl,
+                    data: this.map,
+                }
+                console.log('data', data)
+                this.$http.post('/pixels', data).then(
+                    response => {
+                        let data = response.data
+                        // if (data.code === 200) {
+                        //     console.log(data)
+                        //     this.version = data.data
+                        // }
+                    },
+                    response => {
+                        console.log(response)
+                    })
             },
             selectColor(color) {
                 this.curColor = color

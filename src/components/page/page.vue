@@ -8,6 +8,9 @@
                 <ui-list-item title="像素图制作" to="/">
                     <ui-icon slot="left" value="home"/>
                 </ui-list-item>
+                <ui-list-item title="作品展示" to="/show">
+                    <ui-icon slot="left" value="grade"/>
+                </ui-list-item>
                 <ui-list-item title="像素世界" to="/world">
                     <ui-icon slot="left" value="grade"/>
                 </ui-list-item>
